@@ -1,3 +1,5 @@
+import shadow.bundletool.com.android.tools.r8.internal.vi
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -19,7 +21,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    buildFeatures{
+        dataBinding = true
+        viewBinding = true
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -28,9 +33,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-    dataBinding{
-        enable = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
