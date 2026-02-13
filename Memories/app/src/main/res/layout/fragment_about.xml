@@ -7,15 +7,16 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_background" />
+        android:layout_width="218dp"
+        android:layout_height="130dp"
+        android:rotation="270"
+        android:src="@drawable/fernando" />
 
     <ImageView
-        android:layout_marginTop="12dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_background" />
+        android:layout_width="205dp"
+        android:layout_height="170dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/pedro" />
 
     <TextView
         android:layout_marginTop="12dp"
