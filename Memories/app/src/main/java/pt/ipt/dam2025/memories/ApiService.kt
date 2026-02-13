@@ -13,4 +13,7 @@ interface ApiService {
 
     @GET("api/fotos/{user_id}")
     fun getFotos(@Path("user_id") userId: Int): Call<List<Foto>>
+
+    @POST("/api/fotos")
+    fun guardarFoto(@Body request: Foto): Call<Void>
 }
