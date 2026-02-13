@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/nav_gallery"
-        android:title="Gallery"
+        android:title="Galeria"
         android:icon="@android:drawable/ic_menu_gallery" />
 
     <item
@@ -12,8 +12,13 @@
         android:icon="@android:drawable/ic_menu_camera" />
 
     <item
+        android:id="@+id/nav_settings"
+        android:title="Definições"
+        android:icon="@android:drawable/ic_menu_manage" />
+
+    <item
         android:id="@+id/nav_about"
-        android:title="About"
+        android:title="Acerca de"
         android:icon="@android:drawable/ic_menu_info_details" />
 
 </menu>

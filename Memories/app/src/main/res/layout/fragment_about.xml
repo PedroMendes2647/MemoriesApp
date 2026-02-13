@@ -7,9 +7,9 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="218dp"
-        android:layout_height="130dp"
-        android:rotation="270"
+        android:layout_width="245dp"
+        android:layout_height="164dp"
+
         android:src="@drawable/fernando" />
 
     <ImageView

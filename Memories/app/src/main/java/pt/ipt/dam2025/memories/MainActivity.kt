@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
             val fragment = when (item.itemId) {
                 R.id.nav_gallery -> GalleryFragment()
                 R.id.nav_camera -> CameraFragment()
+                R.id.nav_settings -> SettingsFragment()
                 R.id.nav_about -> AboutFragment()
                 else -> null
             }
