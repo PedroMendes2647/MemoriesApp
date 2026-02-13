@@ -6,15 +6,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher_background" />
+
+    <ImageView
+        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_launcher_background" />
+
     <TextView
-        android:text="About This App"
-        android:textSize="22sp"
+        android:layout_marginTop="12dp"
+        android:text="Autores: Fernando Costa 24346 e Pedro Mendes 24843 "
+        android:textSize="12sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:text="Version 1.0\nSample login + tabs app"
+        android:text="Curso de Engenharia Informática, Desenvolvimento de Aplicações Móveis, 2025/2026"
         android:layout_marginTop="12dp"
+        android:textSize="12sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
