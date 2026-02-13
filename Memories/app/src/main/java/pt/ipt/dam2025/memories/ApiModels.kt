@@ -16,8 +16,9 @@ data class LoginResponse(
 )
 
 data class Foto(
-    val id: Int,
+    val user_id: Int,
     val descricao: String,
-    val lat: Double,
-    val lon: Double
+    val latitude: Double,
+    val longitude: Double
 )
+

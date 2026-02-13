@@ -3,4 +3,18 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="loginHelp">Para registar inserir dados e carregar no botão de registar, para login inserir dados e carregar botão de login</string>
+    <string name="nova_mem_ria">Nova Memória</string>
+    <string name="camara">Câmara</string>
+    <string name="galeria">Galeria</string>
+    <string name="descreva_este_momento">Descreva este momento:</string>
+    <string name="ex_p_r_do_sol_em_leiria">Ex: Pôr do sol em Leiria...</string>
+    <string name="guardar_localiza_o_e_descri_o">Guardar Localização e Descrição</string>
+    <string name="cancelar_escolher_outra">Cancelar / Escolher Outra</string>
+    <string name="voltar_galeria">Voltar à Galeria</string>
+    <string name="tira_uma_foto_ou_escolhe_da_galeria_para_come_ar">Tira uma foto ou escolhe da galeria para começar</string>
+    <string name="about">About</string>
+    <string name="adicionar">Adicionar</string>
+    <string name="gallery">Gallery</string>
+    <string name="d_um_nome_mem_ria">Dê um nome à memória</string>
+    <string name="t_tulo">Título</string>
 </resources>
