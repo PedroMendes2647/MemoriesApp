@@ -12,12 +12,14 @@ import android.net.Uri
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+/**Retrofit: Biblioteca para tornar a API em uma interface de Kotlin/Java. https://square.github.io/retrofit/ */
 
+/** DialogFragment para mostrar os detalhes de uma foto, incluindo a imagem, descrição e coordenadas. Permite também eliminar a foto. */
 class PhotoDetailDialogFragment(
     private val foto: Foto,
     private val onDeleted: () -> Unit
 ) : DialogFragment() {
-
+/** * Cria a view do dialog, carregando a imagem de forma segura e configurando os detalhes da foto. */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -47,7 +49,7 @@ class PhotoDetailDialogFragment(
 
         return view
     }
-
+/** * Apaga a foto do servidor usando Retrofit. Se a foto ainda não tiver um ID, apenas fecha o dialog e notifica para atualizar. */
     private fun apagarFoto() {
         val id = foto.id
         if (id == null) {

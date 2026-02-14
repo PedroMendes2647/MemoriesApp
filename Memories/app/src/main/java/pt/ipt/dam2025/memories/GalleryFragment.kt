@@ -13,13 +13,16 @@ import retrofit2.Response
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+/**Retrofit: Biblioteca para tornar a API em uma interface de Kotlin/Java. https://square.github.io/retrofit/ */
 
 class GalleryFragment : Fragment() {
+/** * Fragmento para mostrar a galeria de fotos do utilizador. */
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: GalleryAdapter
     private val listaFotos = mutableListOf<Foto>()
 
+    /** Cria o layout do fragmento, configura o RecyclerView e carrega as fotos do utilizador. */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -38,7 +41,7 @@ class GalleryFragment : Fragment() {
 
         return view
     }
-
+/** * Carrega as fotos do utilizador a partir do servidor usando Retrofit e atualiza o RecyclerView. */
     private fun carregarFotos() {
         val userId = activity?.intent?.getIntExtra("USER_ID", 1) ?: 1
 
@@ -72,7 +75,7 @@ class GalleryFragment : Fragment() {
                 }
             })
     }
-
+/** Abre o diálogo de detalhes da foto quando uma foto é clicada, passando a foto selecionada e uma função de callback para atualizar a galeria após exclusão. */
     private fun abrirDetalhe(foto: Foto) {
         val dialog = PhotoDetailDialogFragment(foto) {
             carregarFotos() // refresh after delete

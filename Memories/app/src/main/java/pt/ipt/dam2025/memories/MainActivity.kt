@@ -1,16 +1,13 @@
 package pt.ipt.dam2025.memories
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import pt.ipt.dam2025.memories.databinding.ActivityMainBinding
-
+/** * Atividade principal que hospeda os fragmentos de galeria, câmera, configurações e sobre. */
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-
+/** * Configura a navegação entre os fragmentos usando o BottomNavigationView e define o fragmento de galeria como padrão. */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)

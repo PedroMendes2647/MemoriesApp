@@ -8,24 +8,27 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
-
+/** Adapter para o RecyclerView da galeria de fotos. */
 class GalleryAdapter(
     private val listaFotos: List<Foto>,
     private val onClick: (Foto) -> Unit
 ) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
 
+
+    /** ViewHolder para cada item de foto. */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.imageFoto)
     }
-
+/** Cria o ViewHolder com o layout do item de foto. */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_photo, parent, false)
         return ViewHolder(view)
     }
-
+/** Retorna o número de fotos na lista. */
     override fun getItemCount(): Int = listaFotos.size
 
+/** Vincula os dados da foto ao ViewHolder, carregando a imagem do caminho do telefone de forma segura. */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val foto = listaFotos[position]
 

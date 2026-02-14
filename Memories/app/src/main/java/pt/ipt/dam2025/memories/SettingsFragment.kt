@@ -12,12 +12,13 @@ import pt.ipt.dam2025.memories.databinding.FragmentSettingsBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+/**Retrofit: Biblioteca para tornar a API em uma interface de Kotlin/Java. https://square.github.io/retrofit/ */
 
-
+/** * Fragmento para as configurações do utilizador, incluindo logout e eliminação de conta. */
 class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
-
+/** Configura os listeners para os botões de logout e eliminação de conta, fazendo chamadas à API utilizando Retrofit. */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
@@ -33,7 +34,7 @@ class SettingsFragment : Fragment() {
 
         return binding.root
     }
-
+/** Limpa os dados do utilizador e redireciona para a atividade de login. */
     private fun logout() {
         // Clear any stored user data if needed
         val intent = Intent(requireContext(), LoginActivity::class.java)
@@ -41,7 +42,7 @@ class SettingsFragment : Fragment() {
         startActivity(intent)
         activity?.finish()
     }
-
+/** Mostra um diálogo de confirmação antes de eliminar a conta do utilizador. */
     private fun showDeleteAccountConfirmation() {
         AlertDialog.Builder(requireContext())
             .setTitle("Apagar Conta")
@@ -52,7 +53,7 @@ class SettingsFragment : Fragment() {
             .setNegativeButton("Cancelar", null)
             .show()
     }
-
+/** Elimina a conta do utilizador chamando a API. Se a eliminação for bem-sucedida, redireciona para a atividade de login. */
     private fun deleteAccount() {
         // Get user ID from activity intent
         val userId = activity?.intent?.getIntExtra("USER_ID", -1) ?: -1
@@ -85,7 +86,7 @@ class SettingsFragment : Fragment() {
             }
         })
     }
-
+/** Limpa a referência ao binding para evitar memory leaks. */
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

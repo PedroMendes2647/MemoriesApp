@@ -23,9 +23,18 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
+/**Retrofit: Biblioteca para tornar a API em uma interface de Kotlin/Java. https://square.github.io/retrofit/ */
 
 class CameraFragment : Fragment() {
-
+    /** * Fragmento para tirar fotos, escolher da galeria, e enviar para a API. */
+    /** * Lógica centralizada para lidar com fotos, GPS, e envio. */
+    /** 1. Permissões: Câmera, GPS, e Galeria (com distinção para Android 13+)
+     * 2. Lançadores de Resultados: Para câmera, galeria, e permissões
+     * 3. Validação: Apenas descrição é obrigatória; foto é opcional (mas recomendado)
+     * 4. Envio: Envia para API com caminho da foto, descrição, e coordenadas GPS (ou fallback)
+     * 5. Feedback: Toasts para sucesso, erros, e estados intermediários
+     * 6. Armazenamento: Salva fotos no diretório de arquivos do app para persistência
+     */
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
 

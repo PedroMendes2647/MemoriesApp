@@ -2,9 +2,17 @@ package pt.ipt.dam2025.memories
 
 import retrofit2.Call
 import retrofit2.http.*
+/**Retrofit: Biblioteca para tornar a API em uma interface de Kotlin/Java. https://square.github.io/retrofit/ */
 
 interface ApiService {
-
+/** * Interface para definir os endpoints da API REST.
+ *  - register: Endpoint para registrar um novo utilizador.
+ *  - login: Endpoint para autenticar um utilizador e obter um token de acesso.
+ *  - listarFotos: Endpoint para listar todas as fotos associadas a um utilizador específico.
+ *  - eliminarFoto: Endpoint para eliminar uma foto específica.
+ *  - guardarFoto: Endpoint para guardar uma nova foto.
+ *  - deleteAccount: Endpoint para eliminar a conta de um utilizador específico.
+ */
     @POST("auth/register")
     fun register(@Body request: RegisterRequest): Call<Map<String, String>>
 
