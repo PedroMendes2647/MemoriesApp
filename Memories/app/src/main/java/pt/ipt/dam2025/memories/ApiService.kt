@@ -12,7 +12,10 @@ interface ApiService {
     fun login(@Body request: LoginRequest): Call<LoginResponse>
 
     @GET("api/fotos/{user_id}")
-    fun getFotos(@Path("user_id") userId: Int): Call<List<Foto>>
+    fun listarFotos(@Path("user_id") userId: Int): Call<List<Foto>>
+
+    @DELETE("api/fotos/{id}")
+    fun eliminarFoto(@Path("id") id: Int): Call<Void>
 
     @POST("/api/fotos")
     fun guardarFoto(@Body request: Foto): Call<Void>

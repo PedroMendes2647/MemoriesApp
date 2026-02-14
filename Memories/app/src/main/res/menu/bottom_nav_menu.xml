@@ -12,6 +12,11 @@
         android:icon="@android:drawable/ic_menu_add" />
 
     <item
+        android:id="@+id/nav_settings"
+        android:title="Definições"
+        android:icon="@android:drawable/ic_menu_manage" />
+
+    <item
         android:id="@+id/nav_about"
         android:title="@string/about"
         android:icon="@android:drawable/ic_menu_info_details" />
