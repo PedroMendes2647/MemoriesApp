@@ -19,4 +19,7 @@ interface ApiService {
 
     @POST("/api/fotos")
     fun guardarFoto(@Body request: Foto): Call<Void>
+
+    @DELETE("auth/user/{user_id}")
+    fun deleteAccount(@Path("user_id") userId: Int): Call<Void>
 }
