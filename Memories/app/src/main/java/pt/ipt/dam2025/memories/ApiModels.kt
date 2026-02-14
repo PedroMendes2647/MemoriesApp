@@ -19,5 +19,6 @@ data class Foto(
     val id: Int,
     val descricao: String,
     val lat: Double,
-    val lon: Double
+    val lon: Double,
+    val imagem: String
 )
