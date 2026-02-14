@@ -2,6 +2,7 @@ package pt.ipt.dam2025.memories
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +38,7 @@ class GalleryFragment : Fragment() {
 
         return view
     }
-    //PROBLEMA AQUI
+
     private fun carregarFotos() {
         val userId = activity?.intent?.getIntExtra("USER_ID", 1) ?: 1
 
@@ -51,6 +52,12 @@ class GalleryFragment : Fragment() {
                         val fotos = response.body() ?: emptyList()
                         listaFotos.clear()
                         listaFotos.addAll(fotos)
+
+                        // Log the paths received from API
+                        fotos.forEach { foto ->
+                            Log.d("GalleryFragment", "Foto ID: ${foto.id}, Path: ${foto.imagem}")
+                        }
+
                         adapter.notifyDataSetChanged()
 
                         if (fotos.isEmpty()) {
@@ -59,34 +66,13 @@ class GalleryFragment : Fragment() {
                     }
                 }
 
-                override fun onFailure(call: Call<List<Foto>>?, t: Throwable?) { // <--- nullable
+                override fun onFailure(call: Call<List<Foto>>?, t: Throwable?) {
+                    Log.e("GalleryFragment", "Error loading fotos: ${t?.message}")
                     Toast.makeText(context, "Erro ao carregar fotos", Toast.LENGTH_SHORT).show()
                 }
             })
     }
-/**
-    private fun carregarFotos() {
-        val userId = activity?.intent?.getIntExtra("USER_ID", 1) ?: 1
 
-        RetrofitClient.instance.listarFotos(userId)
-            .enqueue(object : Callback<List<Foto>> {
-                override fun onResponse(
-                    call: Call<List<Foto>>,
-                    response: Response<List<Foto>>
-                ) {
-                    if (response.isSuccessful) {
-                        listaFotos.clear()
-                        listaFotos.addAll(response.body()!!)
-                        adapter.notifyDataSetChanged()
-                    }
-                }
-
-                override fun onFailure(call: Call<List<Foto>>, t: Throwable) {
-                    Toast.makeText(context, "Erro ao carregar fotos", Toast.LENGTH_SHORT).show()
-                }
-            })
-    }
-*/
     private fun abrirDetalhe(foto: Foto) {
         val dialog = PhotoDetailDialogFragment(foto) {
             carregarFotos() // refresh after delete
@@ -94,3 +80,4 @@ class GalleryFragment : Fragment() {
         dialog.show(parentFragmentManager, "detalhe")
     }
 }
+
