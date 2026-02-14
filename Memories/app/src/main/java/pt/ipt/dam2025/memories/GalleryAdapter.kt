@@ -13,7 +13,7 @@ class GalleryAdapter(
     private val onClick: (Foto) -> Unit
 ) : RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.imageFoto)
     }
 
@@ -30,7 +30,7 @@ class GalleryAdapter(
 
         // Load image from phone path safely
         val path = foto.imagem
-        if (!path.isNullOrEmpty()) {
+        if (path != null && path.isNotEmpty()) {
             val file = File(path)
             if (file.exists()) {
                 holder.imageView.setImageURI(Uri.fromFile(file))

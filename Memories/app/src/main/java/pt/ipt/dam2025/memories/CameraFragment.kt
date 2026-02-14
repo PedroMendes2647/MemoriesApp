@@ -1,11 +1,13 @@
 package pt.ipt.dam2025.memories
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +15,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.gms.location.LocationServices
+import android.location.Location
+import android.location.LocationManager
 import pt.ipt.dam2025.memories.databinding.FragmentCameraBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,11 +26,6 @@ class CameraFragment : Fragment() {
 
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
-
-    // Cliente para GPS
-    private val fusedLocationClient by lazy {
-        LocationServices.getFusedLocationProviderClient(requireActivity())
-    }
 
     // --- LANÇADORES DE RESULTADOS (Launchers) ---
 
@@ -101,8 +99,6 @@ class CameraFragment : Fragment() {
             enviarDados()
         }
 
-
-
         return binding.root
     }
 
@@ -163,19 +159,30 @@ class CameraFragment : Fragment() {
 
         // 3. Obter GPS (com proteção para PC/Emulador)
         try {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                var location: Location? = null
+                try {
+                    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                } catch (_: Exception) { }
+                if (location == null) {
+                    try { location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) } catch (_: Exception) { }
+                }
+
                 if (location != null) {
-                    // GPS Real
                     enviarParaAPI(userId, descricao, location.latitude, location.longitude)
                 } else {
-                    // Sem GPS (PC) -> Usa Leiria
                     Toast.makeText(context, "Sem GPS. A usar Leiria.", Toast.LENGTH_SHORT).show()
                     enviarParaAPI(userId, descricao, 39.734685, -8.820860)
                 }
-            }.addOnFailureListener {
+            } else {
+                // Sem permissão -> usar fallback
+                Toast.makeText(context, "Sem GPS. A usar Leiria.", Toast.LENGTH_SHORT).show()
                 enviarParaAPI(userId, descricao, 39.734685, -8.820860)
             }
         } catch (e: SecurityException) {
+            Log.w("CameraFragment", "Location permission missing: ${e.message}")
             enviarParaAPI(userId, descricao, 39.734685, -8.820860)
         }
     }
@@ -207,8 +214,6 @@ class CameraFragment : Fragment() {
             }
         })
     }
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()

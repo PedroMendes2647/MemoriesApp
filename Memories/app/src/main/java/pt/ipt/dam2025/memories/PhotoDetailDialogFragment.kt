@@ -1,7 +1,7 @@
 package pt.ipt.dam2025.memories
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.net.Uri
-import androidx.fragment.app.DialogFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,9 +29,17 @@ class PhotoDetailDialogFragment(
         val coords = view.findViewById<TextView>(R.id.txtCoords)
         val deleteBtn = view.findViewById<Button>(R.id.btnDelete)
 
-        img.setImageURI(Uri.parse(foto.imagem))
+        // Null-safe image loading
+        foto.imagem?.let { path ->
+            try {
+                img.setImageURI(Uri.parse(path))
+            } catch (_: Exception) {
+                // ignore
+            }
+        } ?: img.setImageResource(R.drawable.placeholder)
+
         desc.text = foto.descricao
-        coords.text = "Lat: ${foto.lat}  Lon: ${foto.lon}"
+        coords.text = "Lat: ${foto.latitude}  Lon: ${foto.longitude}"
 
         deleteBtn.setOnClickListener {
             apagarFoto()
@@ -42,7 +49,15 @@ class PhotoDetailDialogFragment(
     }
 
     private fun apagarFoto() {
-        RetrofitClient.instance.eliminarFoto(foto.id)
+        val id = foto.id
+        if (id == null) {
+            // Nothing to delete on server; just close and notify caller to refresh
+            dismiss()
+            onDeleted()
+            return
+        }
+
+        RetrofitClient.instance.eliminarFoto(id)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     dismiss()
