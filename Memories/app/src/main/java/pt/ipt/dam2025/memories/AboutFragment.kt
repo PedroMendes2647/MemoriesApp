@@ -1,15 +1,23 @@
 package pt.ipt.dam2025.memories
 
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import android.text.method.LinkMovementMethod
+import android.widget.TextView
 
 /** * Fragmento para mostrar informações sobre a aplicação. */
 
 class AboutFragment : Fragment() {
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_about, container, false)
-    }
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View? {
+            return inflater.inflate(R.layout.fragment_about, container, false)
+        }
+
 }
