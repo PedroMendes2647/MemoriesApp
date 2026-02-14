@@ -41,9 +41,19 @@ class GalleryFragment : Fragment() {
 
         return view
     }
+
+    /** * Força o reload da galeria - método público */
+    fun forceReload() {
+        carregarFotos()
+    }
+
 /** * Carrega as fotos do utilizador a partir do servidor usando Retrofit e atualiza o RecyclerView. */
     private fun carregarFotos() {
         val userId = activity?.intent?.getIntExtra("USER_ID", 1) ?: 1
+
+        // Limpar lista antes de carregar para force reload
+        listaFotos.clear()
+        adapter.notifyDataSetChanged()
 
         RetrofitClient.instance.listarFotos(userId)
             .enqueue(object : Callback<List<Foto>> {

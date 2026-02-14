@@ -1,6 +1,8 @@
 package pt.ipt.dam2025.memories
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
@@ -55,7 +57,10 @@ class PhotoDetailDialogFragment(
         if (id == null) {
             // Nothing to delete on server; just close and notify caller to refresh
             dismiss()
-            onDeleted()
+            // Delay de 1 segundo antes de chamar onDeleted
+            Handler(Looper.getMainLooper()).postDelayed({
+                onDeleted()
+            }, 1000)
             return
         }
 
@@ -63,7 +68,10 @@ class PhotoDetailDialogFragment(
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     dismiss()
-                    onDeleted()
+                    // Delay de 1 segundo antes de chamar onDeleted para dar tempo ao servidor
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        onDeleted()
+                    }, 1000)
                 }
 
                 override fun onFailure(call: Call<Void>, t: Throwable) {}
