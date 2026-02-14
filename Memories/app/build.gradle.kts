@@ -1,4 +1,3 @@
-import shadow.bundletool.com.android.tools.r8.internal.vi
 
 plugins {
     alias(libs.plugins.android.application)

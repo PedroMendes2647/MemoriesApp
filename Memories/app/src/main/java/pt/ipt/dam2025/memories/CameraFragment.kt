@@ -1,11 +1,13 @@
 package pt.ipt.dam2025.memories
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,21 +15,22 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.gms.location.LocationServices
+import android.location.Location
+import android.location.LocationManager
 import pt.ipt.dam2025.memories.databinding.FragmentCameraBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
+import java.io.FileOutputStream
 
 class CameraFragment : Fragment() {
 
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
 
-    // Cliente para GPS
-    private val fusedLocationClient by lazy {
-        LocationServices.getFusedLocationProviderClient(requireActivity())
-    }
+    // Store the current selected photo path
+    private var currentPhotoPath: String? = null
 
     // --- LANÇADORES DE RESULTADOS (Launchers) ---
 
@@ -36,8 +39,15 @@ class CameraFragment : Fragment() {
         ActivityResultContracts.TakePicturePreview()
     ) { bitmap: Bitmap? ->
         if (bitmap != null) {
-            binding.imgPreview.setImageBitmap(bitmap)
-            mostrarFormulario(true)
+            try {
+                // Save bitmap to file and store the path
+                currentPhotoPath = saveBitmapToFile(bitmap)
+                binding.imgPreview.setImageBitmap(bitmap)
+                mostrarFormulario(true)
+            } catch (e: Exception) {
+                Log.e("CameraFragment", "Error saving camera photo: ${e.message}")
+                Toast.makeText(context, "Erro ao guardar foto da câmara", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -46,8 +56,15 @@ class CameraFragment : Fragment() {
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         if (uri != null) {
-            binding.imgPreview.setImageURI(uri)
-            mostrarFormulario(true)
+            try {
+                // Copy gallery image to app directory and store the path
+                currentPhotoPath = copyUriToFile(uri)
+                binding.imgPreview.setImageURI(uri)
+                mostrarFormulario(true)
+            } catch (e: Exception) {
+                Log.e("CameraFragment", "Error saving gallery photo: ${e.message}")
+                Toast.makeText(context, "Erro ao guardar foto da galeria", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -101,8 +118,6 @@ class CameraFragment : Fragment() {
             enviarDados()
         }
 
-
-
         return binding.root
     }
 
@@ -144,7 +159,8 @@ class CameraFragment : Fragment() {
             binding.formContainer.visibility = View.GONE
             binding.imgPreview.setImageResource(android.R.drawable.ic_menu_gallery)
             binding.imgPreview.scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
-            binding.editDescricao.text.clear() // Limpa o texto ao cancelar
+            binding.editDescricao.text.clear()
+            currentPhotoPath = null
         }
     }
 
@@ -158,37 +174,54 @@ class CameraFragment : Fragment() {
             return
         }
 
-        // 2. Obter User ID
+        // 2. Validar que uma foto foi selecionada
+        if (currentPhotoPath == null) {
+            Toast.makeText(context, "Nenhuma foto selecionada", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 3. Obter User ID
         val userId = activity?.intent?.getIntExtra("USER_ID", 1) ?: 1
 
-        // 3. Obter GPS (com proteção para PC/Emulador)
+        // 4. Obter GPS (com proteção para PC/Emulador)
         try {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                if (location != null) {
-                    // GPS Real
-                    enviarParaAPI(userId, descricao, location.latitude, location.longitude)
-                } else {
-                    // Sem GPS (PC) -> Usa Leiria
-                    Toast.makeText(context, "Sem GPS. A usar Leiria.", Toast.LENGTH_SHORT).show()
-                    enviarParaAPI(userId, descricao, 39.734685, -8.820860)
+            val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                var location: Location? = null
+                try {
+                    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                } catch (_: Exception) { }
+                if (location == null) {
+                    try { location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) } catch (_: Exception) { }
                 }
-            }.addOnFailureListener {
-                enviarParaAPI(userId, descricao, 39.734685, -8.820860)
+
+                if (location != null) {
+                    enviarParaAPI(userId, descricao, location.latitude, location.longitude, currentPhotoPath!!)
+                } else {
+                    Toast.makeText(context, "Sem GPS. A usar Leiria.", Toast.LENGTH_SHORT).show()
+                    enviarParaAPI(userId, descricao, 39.734685, -8.820860, currentPhotoPath!!)
+                }
+            } else {
+                // Sem permissão -> usar fallback
+                Toast.makeText(context, "Sem GPS. A usar Leiria.", Toast.LENGTH_SHORT).show()
+                enviarParaAPI(userId, descricao, 39.734685, -8.820860, currentPhotoPath!!)
             }
         } catch (e: SecurityException) {
-            enviarParaAPI(userId, descricao, 39.734685, -8.820860)
+            Log.w("CameraFragment", "Location permission missing: ${e.message}")
+            enviarParaAPI(userId, descricao, 39.734685, -8.820860, currentPhotoPath!!)
         }
     }
 
     // Função que envia para a API
-    private fun enviarParaAPI(iduser: Int, desc: String, lat: Double, lon: Double) {
-
-        // Cria o objeto JSON (Sem título)
+    private fun enviarParaAPI(iduser: Int, desc: String, lat: Double, lon: Double, photoPath: String) {
+        // Cria o objeto JSON com o caminho da foto
         val fotoReq = Foto(
             user_id = iduser,
             descricao = desc,
             latitude = lat,
-            longitude = lon
+            longitude = lon,
+            imagem = photoPath
         )
 
         RetrofitClient.instance.guardarFoto(fotoReq).enqueue(object : Callback<Void> {
@@ -208,10 +241,38 @@ class CameraFragment : Fragment() {
         })
     }
 
+    // Save Bitmap to file in app's files directory and return the path
+    private fun saveBitmapToFile(bitmap: Bitmap): String {
+        val filesDir = requireContext().filesDir  // Use filesDir instead of cacheDir for persistence
+        val fileName = "photo_${System.currentTimeMillis()}.jpg"
+        val file = File(filesDir, fileName)
 
+        FileOutputStream(file).use { out ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+        }
+
+        return file.absolutePath
+    }
+
+    // Copy URI content to file in app's files directory and return the path
+    private fun copyUriToFile(uri: Uri): String {
+        val filesDir = requireContext().filesDir  // Use filesDir instead of cacheDir for persistence
+        val fileName = "photo_${System.currentTimeMillis()}.jpg"
+        val file = File(filesDir, fileName)
+
+        requireContext().contentResolver.openInputStream(uri)?.use { input ->
+            FileOutputStream(file).use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        return file.absolutePath
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+
+
